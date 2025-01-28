@@ -1,0 +1,24 @@
+Jumping to definition / documentation:
+	`gd` - Go to definition of the symbol under the cursor
+	`gD` - Go to declaration
+	`K` - Hover/show documentation
+
+Jumping to files:
+	`gf` - Go to the file under the cursor
+	`gF` - Go the file and the line number
+	
+Jumping to errors:
+	` q` - Open quickfix/diagnostic
+		`<CR>` to go to a specific one 
+		`<C-w>gF` to go to a specific one and close the quickfix window
+
+Repeat:
+    `.` repeats the last change
+    `@:` repeats the last Ex command (`:` commands)
+    <Up> / <Down> / <C-p> / <C-n> to navigate commands 
+    `@@` repeats the last macro 
+    `//` repeats the last search (can be modified)
+    `;` repeats last f, t, F, or T motion
+    `,` repeats last f, t, F, or T motion in opposite direction
+    `&` repeats last substitute on current line
+    `g&` repeats last substitute on entire file
