@@ -1,0 +1,103 @@
+vim commands:
+	hjkl
+	0   ^.... b....w ....$
+	
+	y yank p paste
+	v visual, : command, V visual but line-by-line
+	d delete
+	
+	i <- insert before
+	a -> insert after 
+	I <- in normal mode, insert at the start of the line 
+	I <- in block mode, insert at each start of the line
+	A -> in normal mode, insert at the end of the line 
+	A -> in block mode, insert at each end of the line 
+	
+	f -> to the char
+	F <- to the char
+	t -> right before the char
+	T <- right after the char
+	
+	H M L
+	
+	gg start of file
+	....
+	....
+	G  end of file (or :$)
+	
+	ctrl + b (back) / f (front) / u (1/2 screen up) / d (1/2 screen down)
+	{ / } -> got the the end / start of the paragraph
+	
+	ddkp  -> delete line, move up, paste line 
+	ddjp  -> delete line, move down, paste line
+	ddp   -> move line one line down 
+	ddkkp -> move line one line up 
+	ddkP  -> move line one line up (P paste above)	
+	
+	:m +/-n -> move line down/up n line
+
+	:reg -> list registers
+	" -> Access to registers
+	Examples:
+		"vyy -> copy current line to register v 
+		"vP  -> paste register v to line above 
+		"*p  -> paste from clipboard (windows, for linux its *)
+
+
+z commands:
+	zz -> center
+	zt -> top
+	zb -> bottom
+	
+	zM -> Fold all recursively, zm -> fold level by level
+	zR <- Unfold all recursively, rz <- unfold level by level
+	
+	zc -> close current fold
+	zo -> open current fold 
+	za -> toggle fold
+	
+
+search:
+	/pattern -> search forward
+	?pattern -> search backward
+	* -> search forward for current word 
+	# -> search backward for current word 
+	n / N -> next / previous occurence
+	
+
+search and replace:
+	:[range]s/{pattern}/{string}/[flags] [count]
+	:s/pattern_to_look_for/pattern_to_replace_with
+	whole file: range=%
+	whole line: flags=g
+	ask for confirmation: flags=c
+	case insensitive: flags=i
+	example of range: % / 4,10 / .,+10 / .,$ / g,.
+	search for whole word only: :s/\<foo\>/bar/
+
+	Examples
+		Comment lines (add # before the line) from 5 to 20:
+		:5,20s/^/#/
+
+		Uncomment lines from 5 to 20, revert the previous changes:
+		:5,20s/^#//
+
+		Replace all instances of ‘apple’, ‘orange’, and ‘mango’ with ‘fruit’:
+		:%s/apple\|orange\|mango/fruit/g
+
+		Remove trailing whitespace at the end of each line:
+		:%s/\s\+$//e
+
+
+macro:
+	qa -> start recording macro a
+	...
+	...
+	q  -> end recording
+	@a -> play macro a
+
+
+Insert mode:
+    <C-H>    Delete one character
+    <C-W>    Delete one word
+    <C-U>    Delete the entire line
