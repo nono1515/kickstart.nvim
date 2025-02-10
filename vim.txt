@@ -18,6 +18,11 @@ vim commands:
 	t -> right before the char
 	T <- right after the char
 	
+	cib <- [c]hange [i]nside [b]lock (paranthesis)
+	c,d,y,v <- [c]hange, [d]elete, [y]ank, [v]isual mode 
+	i,a <- [i]nside, [a]round
+	",',`,()b,[],{}B,<>,w,W,s,p,t,_,l <- ", ', `, (, [, {, <, word, WORD, sentence, paragraph, tag (HTML), _, line (indentation level)
+	
 	H M L
 	
 	gg start of file
