@@ -176,6 +176,24 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Custom function to show diagnostic with source information
+local function show_diagnostic_with_source()
+  local opts = {
+    format = function(diagnostic)
+      -- Format to clearly show the source
+      if diagnostic.source then
+        return string.format('[%s] %s', diagnostic.source, diagnostic.message)
+      else
+        return diagnostic.message
+      end
+    end,
+    header = 'Diagnostic Details',
+    prefix = '', -- Use empty string instead of boolean
+  }
+  vim.diagnostic.open_float(nil, opts) -- Use nil instead of 0
+end
+vim.keymap.set('n', '<leader>i', show_diagnostic_with_source, { desc = '[I]nspect diagnostic' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -735,8 +753,14 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        pyright = {},
-        ruff = {},
+        -- pyright = {},
+        mypy = {},
+        ruff = {
+          settings = {
+            format = { enabled = true },
+            -- format_on_save = { enabled = true },
+          },
+        },
         debugpy = {},
         taplo = {},
         -- rust_analyzer = {},
@@ -834,7 +858,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'ruff_format' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -1020,7 +1044,7 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
