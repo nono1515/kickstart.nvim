@@ -11,6 +11,9 @@ Jumping to errors:
 	` q` - Open quickfix/diagnostic
 		`<CR>` to go to a specific one 
 		`<C-w>gF` to go to a specific one and close the quickfix window
+	` ca` - open code action
+	[d - Go to previous diagnostic
+	]d - Go to next diagnostic
 
 Repeat:
     `.` repeats the last change

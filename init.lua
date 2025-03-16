@@ -107,6 +107,16 @@ vim.opt.relativenumber = true
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
+-- Set up Treesitter-based folding
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+-- Don't fold by default when opening files
+vim.opt.foldenable = false
+-- Start with all folds open
+vim.opt.foldlevel = 99
+-- Maximum fold nesting
+vim.opt.foldnestmax = 10
+
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
 
@@ -763,7 +773,7 @@ require('lazy').setup({
         },
         debugpy = {},
         taplo = {},
-        -- rust_analyzer = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
