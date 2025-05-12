@@ -204,6 +204,41 @@ local function show_diagnostic_with_source()
 end
 vim.keymap.set('n', '<leader>i', show_diagnostic_with_source, { desc = '[I]nspect diagnostic' })
 
+local function yank_diagnostic_with_source()
+  local all_formatted = {}
+
+  local opts = {
+    format = function(diagnostic)
+      local formatted
+      if diagnostic.source then
+        formatted = string.format('[%s] %s', diagnostic.source, diagnostic.message)
+      else
+        formatted = diagnostic.message
+      end
+      table.insert(all_formatted, formatted)
+      return formatted
+    end,
+  }
+
+  -- This will process all diagnostics at cursor and fill our all_formatted table
+  vim.diagnostic.open_float(nil, opts)
+
+  -- Join all diagnostics with newlines if there are multiple
+  local clipboard_text = table.concat(all_formatted, '\n')
+
+  -- Copy to clipboard
+  vim.fn.setreg('+', clipboard_text)
+  vim.fn.setreg('"', clipboard_text)
+
+  local count = #all_formatted
+  if count > 0 then
+    vim.notify(count .. ' diagnostic(s) copied to clipboard', vim.log.levels.INFO)
+  else
+    vim.notify('No diagnostics found at cursor', vim.log.levels.WARN)
+  end
+end
+vim.keymap.set('n', '<leader>I', yank_diagnostic_with_source, { desc = 'Yank Diagnostic [I]nspection' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -341,7 +376,7 @@ require('lazy').setup({
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
 
-  {                     -- Useful plugin to show you pending keybinds.
+  { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
@@ -387,7 +422,7 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>c', group = '[C]ode',     mode = { 'n', 'x' } },
+        { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
@@ -425,7 +460,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -475,6 +510,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sF', function()
+        require('telescope.builtin').find_files { hidden = true }
+      end, { desc = '[S]earch [F]iles (including hidden)' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -541,7 +579,7 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim',       opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
@@ -655,8 +693,7 @@ require('lazy').setup({
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
-          map_and_center('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols,
-            '[W]orkspace [S]ymbols')
+          map_and_center('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
@@ -782,7 +819,23 @@ require('lazy').setup({
         },
         debugpy = {},
         taplo = {},
-        rust_analyzer = {},
+        rust_analyzer = {
+          settings = {
+            ['rust-analyzer'] = {
+              -- For real-time checking
+              check = {
+                command = 'check',
+                features = 'all',
+              },
+              -- For on-save clippy checks
+              checkOnSave = {
+                command = 'clippy',
+                extraArgs = { '--no-deps' },
+                allFeatures = true,
+              },
+            },
+          },
+        },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
