@@ -297,6 +297,23 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Git conflict resolution keymaps (only active in diff mode)
+vim.api.nvim_create_autocmd('BufEnter', {
+  desc = 'Setup git conflict resolution keymaps in diff mode',
+  group = vim.api.nvim_create_augroup('kickstart-diff-keymaps', { clear = true }),
+  callback = function()
+    if vim.wo.diff then
+      local opts = { buffer = true, silent = true }
+      vim.keymap.set('n', '<leader>go', '<cmd>diffget LOCAL<CR>', vim.tbl_extend('force', opts, { desc = '[G]it diff: Get [O]urs (LOCAL)' }))
+      vim.keymap.set('n', '<leader>gO', '<cmd>%diffget LOCAL<CR>', vim.tbl_extend('force', opts, { desc = '[G]it diff: Get all [O]urs (LOCAL)' }))
+      vim.keymap.set('n', '<leader>gt', '<cmd>diffget REMOTE<CR>', vim.tbl_extend('force', opts, { desc = '[G]it Diff: Get [T]heirs (REMOTE)' }))
+      vim.keymap.set('n', '<leader>gT', '<cmd>%diffget REMOTE<CR>', vim.tbl_extend('force', opts, { desc = '[G]it Diff: Get all [T]heirs (REMOTE)' }))
+      vim.keymap.set('n', '<leader>gr', '<cmd>diffget BASE<CR>', vim.tbl_extend('force', opts, { desc = '[G]it Diff: [R]eset conflict to original (BASE)' }))
+      vim.keymap.set('n', '<leader>gR', '<cmd>%diffget BASE<CR>', vim.tbl_extend('force', opts, { desc = '[G]it diff: [R]eset all to original (BASE)' }))
+    end
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -427,6 +444,7 @@ require('lazy').setup({
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
+        { '<leader>g', group = '[G]it' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
